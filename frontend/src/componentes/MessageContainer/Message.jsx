@@ -1,16 +1,29 @@
-const Message = () => {
+import useConversation from "../../Zustand/useConversation";
+import {useAuthContext} from "../../context/AuthContext"
+import { extractTime } from "../utils/extractTime";
+
+const Message = ({message}) => {
+
+       const {authUser} = useAuthContext();
+        const {selectedConversation} = useConversation();
+        const fromMe = message.senderId === authUser._id;
+        const chatClassName = fromMe ? 'chat-end' : 'chat-start';
+        const profilepic = fromMe ? authUser.profilepic:selectedConversation?.profilepic;
+        const bubbleBgColor = fromMe ?'bg-blue-500' : '';
+        const formatedTime = extractTime(message.createdAt);
+
     return (
-        <div className="chat chat-end">
-            <div className="chat-imge avatar">
+        <div className={`chat ${chatClassName}`}>
+            <div className="chat-image avatar">
                 <div className="w-10 rounded-full">
-                    <img src="https://img.daisyui.com/images/profile/demo/kenobee@192.webp" alt="Tailwnd css chat bubble component" />
+                    <img src={profilepic} alt="Tailwnd css chat bubble component" />
                 </div>
             </div>
-            <div className={`chat-bubble text-white bg-blue-500`} > 
-                Hi! what is upp? 
+            <div className={`chat-bubble text-white ${bubbleBgColor}`} > 
+                {message.message}
             </div>
-            <div className={`chat-footer text-white bg-blue-500`} > 
-                12:42
+            <div className="chat-footer opacity-50 text-xs "> 
+                 {formatedTime}
             </div>
         </div>
     )
